@@ -59,4 +59,18 @@ RSpec.describe 'SignUp', type: :request do
       expect(json['errors']).to be_nil
     end
   end
+  context 'Mail Verification' do
+    let(:parameters) do
+      { first_name: 'Jane',
+        last_name: 'Doe',
+        username: 'janedoe',
+        email: 'jane@example.com',
+        password: 'Password1',
+        confirm_password: 'Password1' }
+    end
+    let(:url) { post '/api/v1/auth/register', params: parameters }
+    scenario 'should return 201 if all parameters are valid' do
+      expect { url }.to change { ActionMailer::Base.deliveries.size }.by(1)
+    end
+  end
 end
