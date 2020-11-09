@@ -1,19 +1,4 @@
-# frozen_string_literal: true
-
-class User < ActiveRecord::Base
-  extend Devise::Models
-
-  before_validation do
-    self.uid = email if uid.blank?
-    self.provider = email if provider.blank?
-  end
-
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable and :omniauthable
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable
-  include DeviseTokenAuth::Concerns::User
-
+class User < ApplicationRecord
   enum plan: %i[starter premium]
 
   validates :first_name, presence: true, length: { minimum: 3, maximum: 50 }
@@ -25,4 +10,9 @@ class User < ActiveRecord::Base
                        format: { with: /\A(?=.*\d)(?=.*[a-z])(?=.*[A-Z])([\x20-\x7E]){8,50}\Z/ }
   validates :email_notification, presence: true
   validates :plan, presence: true
+
+  # Include default devise modules. Others available are:
+  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+  devise :database_authenticatable, :registerable,
+         :recoverable, :rememberable, :validatable
 end
