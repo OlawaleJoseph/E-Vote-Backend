@@ -23,7 +23,9 @@ Devise.setup do |config|
   config.jwt do |jwt|
     jwt.secret = Rails.application.credentials[:devise][:JWT_SECRET_KEY]
     jwt.dispatch_requests = [
-      ['POST', %r{^/api/v1/auth/login$}]
+      ['POST', %r{^/api/v1/auth/login$}],
+      ['GET', %r{^/api/v1/auth/facebook/callback$}],
+      ['GET', %r{^/api/v1/auth/google_oauth2/callback$}]
     ]
     jwt.revocation_requests = [
       ['DELETE', %r{^/api/v1/logout$}]
@@ -321,4 +323,8 @@ Devise.setup do |config|
   # When set to false, does not sign a user in automatically after their password is
   # changed. Defaults to true, so a user is signed in automatically after changing a password.
   # config.sign_in_after_change_password = true
+
+  # OmniAuth
+  config.omniauth :facebook, '999564367122051', 'a9b9f716eefb991c298ae92127b260ea', token_params: { parse: :json }
+  config.omniauth :google_oauth2, '262385605116-91o30gpbl9ln0gb2idpup1mdrr6isvi3.apps.googleusercontent.com', 'p6-aQDzkTW2eQ-iEVxkjvDGi'
 end

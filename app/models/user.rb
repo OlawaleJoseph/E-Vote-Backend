@@ -12,10 +12,11 @@ class User < ApplicationRecord
   validates :plan, presence: true
 
   # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable, :confirmable,
-         :jwt_authenticatable, jwt_revocation_strategy: JwtDenylist
+  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable,
+  devise :database_authenticatable, :registerable, :recoverable,
+         :rememberable, :validatable, :confirmable, :omniauthable,
+         :jwt_authenticatable, jwt_revocation_strategy: JwtDenylist,
+                               omniauth_providers: %i[facebook google_oauth2]
 
   def jwt_payload
     {
@@ -24,5 +25,33 @@ class User < ApplicationRecord
       username: username,
       email: email
     }
+  end
+
+  def confirmed?
+    !confirmed_at.nil?
+  end
+
+  def self.from_omniauth(auth)
+    client = where(email: auth.info.email).first
+
+    return client if client&.confirmed?
+
+    if client
+      client.skip_confirmation!
+      return client
+    end
+
+    where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
+      first_name, last_name = auth.info.name.split(' ')
+      user.email = auth.info.email
+      user.password = Devise.friendly_token[0, 20]
+      user.first_name = first_name # assuming the user model has a name
+      user.last_name = last_name # assuming the user model has a name
+      user.username = auth.info.email
+      user.provider = auth.provider
+      user.uid = auth.uid # assuming the user model has a name
+      # user.image = auth.info.image # assuming the user model has an image
+      user.skip_confirmation!
+    end
   end
 end

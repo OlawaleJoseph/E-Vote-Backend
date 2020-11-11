@@ -9,9 +9,11 @@ gem 'rails', '~> 6.0.3', '>= 6.0.3.4'
 gem 'pg'
 # Use Puma as the app server
 gem 'puma', '~> 4.1'
-# Devise for authentication
+# Authentication
 gem 'devise'
 gem 'devise-jwt'
+gem 'omniauth-facebook'
+gem 'omniauth-google-oauth2'
 
 # Env variables
 gem 'figaro'
