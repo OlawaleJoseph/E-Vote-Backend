@@ -33,3 +33,7 @@
 
 # Test Coverage
 coverage/
+
+/config/credentials/development.key
+
+/config/credentials/test.key

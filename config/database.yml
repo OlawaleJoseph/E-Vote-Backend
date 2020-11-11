@@ -17,11 +17,11 @@
 development:
   adapter: postgresql
   encoding: unicode
-  database: e_vote_development
+  database: <%= Rails.application.credentials[:database][:NAME] %>
   pool: 5
   host: localhost
-  username: e_vote
-  password: e_vote_password
+  username: <%= Rails.application.credentials[:database][:USERNAME] %>
+  password: <%= Rails.application.credentials[:database][:PASSWORD] %>
   timeout: 5000
  
   # Connect on a TCP socket. Omitted by default since the client uses a
@@ -48,9 +48,9 @@ development:
 test:
   adapter: postgresql
   encoding: unicode
-  database: e_vote_test
+  database: <%= Rails.application.credentials[:database][:NAME] %>
   pool: 5
   host: localhost
-  username: e_vote
-  password: e_vote_password
+  username: <%= Rails.application.credentials[:database][:USERNAME] %>
+  password: <%= Rails.application.credentials[:database][:PASSWORD] %>
   timeout: 5000
