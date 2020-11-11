@@ -325,6 +325,9 @@ Devise.setup do |config|
   # config.sign_in_after_change_password = true
 
   # OmniAuth
-  config.omniauth :facebook, '999564367122051', 'a9b9f716eefb991c298ae92127b260ea', token_params: { parse: :json }
-  config.omniauth :google_oauth2, '262385605116-91o30gpbl9ln0gb2idpup1mdrr6isvi3.apps.googleusercontent.com', 'p6-aQDzkTW2eQ-iEVxkjvDGi'
+  config.omniauth :facebook, Rails.application.credentials[:facebook][:APP_ID],
+                             Rails.application.credentials[:facebook][:SECRET],
+                             token_params: { parse: :json }
+  config.omniauth :google_oauth2, Rails.application.credentials[:google][:APP_ID],
+  Rails.application.credentials[:google][:SECRET]
 end
