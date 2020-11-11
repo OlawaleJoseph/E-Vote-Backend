@@ -1,11 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe 'Login', type: :request do
-  context 'Validations' do
+  context 'Validate' do
     let(:user) { create(:user) }
     let(:url) { '/api/v1/auth/login' }
 
-    context '' do
+    context 'user credentials' do
       scenario 'should return 400 if email is absent' do
         user.email = ''
         login_user(user)
