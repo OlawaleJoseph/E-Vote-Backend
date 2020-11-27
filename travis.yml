@@ -1,0 +1,13 @@
+
+language: ruby
+rvm:
+  - 2.7.1
+cache: bundler
+services:
+  - postgresql
+before_script:
+  - bundle exec rails db:create
+  - bundle exec rails db:migrate
+script: bundle exec rspec spec
+after_success:
+  - CI=true TRAVIS=true coveralls --verbose
