@@ -37,5 +37,6 @@ RSpec.describe Poll, type: :model do
 
   context '#Assubject.valid?ociations' do
     scenario { should belong_to(:host) }
+    scenario { should have_many(:poll_questions) }
   end
 end

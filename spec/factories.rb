@@ -27,4 +27,9 @@ FactoryBot.define do
     img_url { 'imageurlhere' }
     host_id { 1 }
   end
+
+  factory :poll_question do
+    poll_id { 1 }
+    content { 'The poll question' }
+  end
 end
