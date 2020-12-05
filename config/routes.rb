@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   namespace :api, defaults: { format: :json } do
     namespace :v1, defaults: { format: :json } do
       root to: 'home#index'
+      resources :polls
     end
   end
   devise_for :users, defaults: { format: :json },
