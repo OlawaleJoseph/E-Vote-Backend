@@ -17,4 +17,14 @@ FactoryBot.define do
   factory :confirmed_user, parent: :user do
     after(:create) { |user| user.confirm! }
   end
+
+  factory :poll do
+    title { 'Test' }
+    info { 'A test poll' }
+    restricted { false }
+    start_date { DateTime.now }
+    end_date { DateTime.now + 2 }
+    img_url { 'imageurlhere' }
+    host_id { 1 }
+  end
 end
