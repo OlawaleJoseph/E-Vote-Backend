@@ -250,8 +250,6 @@ RSpec.describe 'Api::V1::Polls', type: :request do
       scenario 'missing poll answer content field' do
         poll[:poll_questions_attributes][0][:poll_answers_attributes].pop
 
-        p poll
-
         visit_with_headers
 
         res = json

@@ -6,7 +6,14 @@ cache:
   - yarn
 services:
   - postgresql
+addons:
+  code_climate:
+    repo_token:
+      secure: "dQEUU9xHnj2Gu/NuxykGz0g+bhCGzoCMyH7mI0hYz6tot9a2YkLoro9w75gZ252SA5YHhMzsSwRYBB1ZtfFOzAVYC6yhyCy6ChJ0fs7W7conwZI0aGDVg/TSpuFZzeeNhpcC1GAGodUpk5FR1MMcYzSnvW56bZv2vViSFaB2PeqlwDivEE/CFmx0v23g5a7+T/Dp8B1eZCGhj9q7FmY3YTHtZWmdDcleeoAkAsVQbSraojGqDdBny6B5ojsclEc1E59m++lCDnqFjk8B6LwyKG1/rFLw6GHULMfGFt+SFjNJ1+lTlS9Krmj4gFqa/EXmC67zoyfzk+FxP7lKOOJ3xoZebtxUfUew4soJvoJHTKzXB2uP8rwLu1ZagQ/krERrecXjjhF4ip7vwzBjIYpZPpvXJF2Ctgy2H68qoMz5w1JZZDHnixSyZ81Gcb6HY/ShxvfQVMNe8WS+AvUR0Ugc6KgAxoPYAFMvbnMBSnWg2uhAoREj1D3dliLPV57gtXFjiUgvv9YoxcBvXSwRK4iB7t6BDW8f3SwrqM7EkRjZq9+bKK45IuuZLjuqjPLfwUBnBSv8XWnwIYF7X9+sj/ENtkx3gdbcEAZbHibSu9hY8Zd0YH+OBbMt4TMe9uYDfHf4BSzbsPghX3SlZuMM9Pt+ppLv+MzfLNZF67aGRy9ljYU="
 before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
   - psql -c "CREATE ROLE e_vote LOGIN SUPERUSER PASSWORD 'e_vote_password'" -U postgres
   - bundle install --jobs=3 --retry=3
   - yarn
@@ -14,3 +21,6 @@ before_script:
   - bundle exec rails db:schema:load
 script:
   - bundle exec rspec
+
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
