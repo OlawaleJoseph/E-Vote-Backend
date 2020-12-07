@@ -23,6 +23,9 @@ RSpec.describe 'Api::V1::Polls', type: :request do
             "poll_answers_attributes": [
               {
                 "content": 'First Answer'
+              },
+              {
+                "content": 'Second Answer'
               }
             ]
           }
@@ -242,6 +245,20 @@ RSpec.describe 'Api::V1::Polls', type: :request do
         expect(response).to have_http_status(422)
         expect(res['errors']).to include('poll_questions.poll_answers.content')
         expect(res['errors']['poll_questions.poll_answers.content']).to include("can't be blank")
+      end
+
+      scenario 'missing poll answer content field' do
+        poll[:poll_questions_attributes][0][:poll_answers_attributes].pop
+
+        p poll
+
+        visit_with_headers
+
+        res = json
+
+        expect(response).to have_http_status(422)
+        expect(res['errors']).to include('poll_answers')
+        expect(res['errors']['poll_answers']).to include('question should have at least 2 answers')
       end
     end
 

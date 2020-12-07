@@ -11,9 +11,11 @@ class Api::V1::PollsController < ApplicationController
     poll.poll_questions.each do |record|
       if record.poll_answers.nil? || record.poll_answers.empty?
         messages[:poll_answers] = ["can't be blank"]
-        return display_error(422, messages)
+      elsif record.poll_answers.length < 2
+        messages[:poll_answers] = ['question should have at least 2 answers']
       end
     end
+    return display_error(422, messages) unless messages.keys.empty?
 
     poll.save!
 
