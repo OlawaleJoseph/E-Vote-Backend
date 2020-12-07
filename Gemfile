@@ -42,7 +42,7 @@ group :development, :test do
 end
 
 group :test do
-  gem 'coveralls'
+  gem 'coveralls_reborn', '~> 0.19.0', require: false
   gem 'database_cleaner'
   gem 'factory_bot_rails'
   gem 'shoulda-matchers'
