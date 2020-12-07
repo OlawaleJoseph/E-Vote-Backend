@@ -10,10 +10,6 @@ RSpec.describe Poll, type: :model do
     scenario { should validate_presence_of(:info) }
     scenario { should validate_length_of(:info).is_at_least(3) }
 
-    scenario { should validate_presence_of(:restricted) }
-
-    scenario { should validate_presence_of(:img_url) }
-
     scenario { should validate_presence_of(:start_date) }
     scenario { should validate_presence_of(:end_date) }
 
@@ -27,16 +23,15 @@ RSpec.describe Poll, type: :model do
 
     it 'start date should be less than end date' do
       invalid = subject
-      invalid.start_date = DateTime.new(2019, 12, 31, 12, 12, 12)
+      invalid.start_date = DateTime.new - 4
       invalid.save
       expect(invalid.errors.messages.keys).to include(:start_date)
-      expect(invalid.errors.messages[:start_date]).to include('choose a future date for start date')
+      expect(invalid.errors.messages[:start_date]).to include('start date is in the past')
     end
   end
 
-  context '#Assubject.valid?ociations' do
+  context '#Associations' do
     scenario { should belong_to(:host) }
     scenario { should have_many(:poll_questions) }
-    scenario { should have_many(:poll_answers) }
   end
 end

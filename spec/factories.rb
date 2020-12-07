@@ -34,7 +34,6 @@ FactoryBot.define do
   end
 
   factory :poll_answer do
-    poll_id { 1 }
     poll_question_id { 1 }
     content { 'Answer 1' }
   end
