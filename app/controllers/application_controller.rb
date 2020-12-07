@@ -7,4 +7,17 @@ class ApplicationController < ActionController::Base
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:sign_up, keys: %i[first_name last_name username])
   end
+
+  def verify_token!
+    raise JWT::VerificationError if request.headers['Authorization'].nil?
+
+    token = request.headers['Authorization'].split(' ').last
+    JWT.decode(token, Rails.application.credentials[:devise][:JWT_SECRET_KEY], true).first
+  rescue JWT::DecodeError, JWT::VerificationError
+    render json: { errors: { message: 'Kindly login or register' } }, status: 401
+  end
+
+  def display_error(status, errors)
+    render json: { errors: errors }, status: status
+  end
 end

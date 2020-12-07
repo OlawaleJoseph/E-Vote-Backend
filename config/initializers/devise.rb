@@ -326,8 +326,8 @@ Devise.setup do |config|
 
   # OmniAuth
   config.omniauth :facebook, Rails.application.credentials[:facebook][:APP_ID],
-                             Rails.application.credentials[:facebook][:SECRET],
-                             token_params: { parse: :json }
+                  Rails.application.credentials[:facebook][:SECRET],
+                  token_params: { parse: :json }
   config.omniauth :google_oauth2, Rails.application.credentials[:google][:APP_ID],
-  Rails.application.credentials[:google][:SECRET]
+                  Rails.application.credentials[:google][:SECRET]
 end

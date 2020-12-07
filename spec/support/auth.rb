@@ -10,5 +10,10 @@ module AuthHelper
         password: user.password
       }
     }
+    response.headers['Authorization']
+  end
+
+  def headers(token)
+    { 'Accept': 'application/json', 'Authorization': token }
   end
 end

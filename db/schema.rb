@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20_201_110_092_057) do
+ActiveRecord::Schema.define(version: 20_201_205_175_027) do
   # These are extensions that must be enabled in order to support this database
   enable_extension 'plpgsql'
 
@@ -20,6 +20,37 @@ ActiveRecord::Schema.define(version: 20_201_110_092_057) do
     t.datetime 'created_at', precision: 6, null: false
     t.datetime 'updated_at', precision: 6, null: false
     t.index ['jti'], name: 'index_jwt_denylist_on_jti'
+  end
+
+  create_table 'poll_answers', force: :cascade do |t|
+    t.string 'content', null: false
+    t.integer 'poll_question_id', null: false
+    t.datetime 'created_at', precision: 6, null: false
+    t.datetime 'updated_at', precision: 6, null: false
+    t.integer 'question_id'
+    t.index ['poll_question_id'], name: 'index_poll_answers_on_poll_question_id'
+    t.index ['question_id'], name: 'index_poll_answers_on_question_id'
+  end
+
+  create_table 'poll_questions', force: :cascade do |t|
+    t.string 'content', null: false
+    t.integer 'poll_id'
+    t.datetime 'created_at', precision: 6, null: false
+    t.datetime 'updated_at', precision: 6, null: false
+    t.index ['poll_id'], name: 'index_poll_questions_on_poll_id'
+  end
+
+  create_table 'polls', force: :cascade do |t|
+    t.string 'title', null: false
+    t.text 'info', null: false
+    t.string 'img_url'
+    t.boolean 'restricted', null: false
+    t.datetime 'start_date', null: false
+    t.datetime 'end_date', null: false
+    t.integer 'host_id'
+    t.datetime 'created_at', precision: 6, null: false
+    t.datetime 'updated_at', precision: 6, null: false
+    t.index ['host_id'], name: 'index_polls_on_host_id'
   end
 
   create_table 'users', force: :cascade do |t|
