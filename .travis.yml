@@ -1,0 +1,16 @@
+language: ruby
+rvm:
+- 2.7.1
+cache:
+- bundler
+- yarn
+services:
+- postgresql
+before_script:
+- psql -c "CREATE ROLE e_vote LOGIN SUPERUSER PASSWORD 'e_vote_password'" -U postgres
+- bundle install --jobs=3 --retry=3
+- yarn
+- bundle exec rails db:create
+- bundle exec rails db:schema:load
+script:
+- bundle exec rspec
