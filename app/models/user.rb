@@ -1,5 +1,6 @@
 class User < ApplicationRecord
   enum plan: %i[starter premium]
+  has_many :polls, foreign_key: :host_id
 
   validates :first_name, presence: true, length: { minimum: 3, maximum: 50 }
   validates :last_name, presence: true, length: { minimum: 3, maximum: 50 }
