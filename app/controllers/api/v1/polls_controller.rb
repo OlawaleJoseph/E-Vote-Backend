@@ -2,6 +2,18 @@ class Api::V1::PollsController < ApplicationController
   before_action :verify_token!
   rescue_from ActiveRecord::RecordInvalid, with: :handle_validation_errors
 
+  def index
+    polls = Poll.all.includes(:host, poll_questions: [:poll_answers])
+    polls.each do |poll|
+      poll.poll_questions.each do |que|
+        p que.poll_answers
+        puts
+      end
+    end
+
+    render json: polls, status: :ok
+  end
+
   def create
     poll = current_user.polls.build(poll_params)
     messages = {}
@@ -21,8 +33,6 @@ class Api::V1::PollsController < ApplicationController
 
     render json: poll, status: 201
   end
-
-  def show; end
 
   private
 

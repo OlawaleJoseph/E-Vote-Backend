@@ -22,7 +22,7 @@ FactoryBot.define do
     title { 'Test' }
     info { 'A test poll' }
     restricted { false }
-    start_date { DateTime.now }
+    start_date { DateTime.now  + 1}
     end_date { DateTime.now + 2 }
     img_url { 'imageurlhere' }
     host_id { 1 }

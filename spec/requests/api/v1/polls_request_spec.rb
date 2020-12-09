@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe 'Api::V1::Polls', type: :request do
-  user = nil
-  poll = nil
-  token = nil
   context 'Polls Creation' do
+    user = nil
+    poll = nil
+    token = nil
     before do
       user = create :user
       token = login_user(user)
@@ -250,8 +250,6 @@ RSpec.describe 'Api::V1::Polls', type: :request do
       scenario 'missing poll answer content field' do
         poll[:poll_questions_attributes][0][:poll_answers_attributes].pop
 
-        p poll
-
         visit_with_headers
 
         res = json
@@ -270,6 +268,42 @@ RSpec.describe 'Api::V1::Polls', type: :request do
       expect(response).to have_http_status(201)
       expect(res['host_id']).to eq(user.id)
       expect(res['id']).to be_truthy
+    end
+  end
+
+  context 'Get All User Polls' do
+    user_token = nil
+    poll = nil
+    user = nil
+    before do
+      user = create :user
+      poll = create :poll, host_id: user.id
+      user_token = login_user(user)
+    end
+
+    let(:visit_with_headers) { get '/api/v1/polls', headers: headers(user_token) }
+    let(:visit_without_headers) { get '/api/v1/polls' }
+
+    scenario 'returns 401 if user is not logged in' do
+      visit_without_headers
+      res = json
+
+      expect(response).to have_http_status(401)
+      expect(response).not_to have_http_status(200)
+      expect(res['errors']['message']).to eq('Kindly login or register')
+    end
+
+    scenario 'successfully returns polls of the logged in user' do
+      visit_with_headers
+      res = json
+
+      expect(response).to have_http_status(200)
+      expect(response).not_to have_http_status(401)
+      expect(res).to be_an_instance_of(Array)
+      res.each do |found_poll|
+        expect(found_poll['host_id']).to eq(user.id)
+        expect(found_poll['host_id']).not_to eq(1100)
+      end
     end
   end
 end
