@@ -34,6 +34,14 @@ class Api::V1::PollsController < ApplicationController
     render json: poll, status: 201
   end
 
+  def show
+    poll = Poll.includes(:host, poll_questions: [:poll_answers]).find(params[:id])
+    p poll.host, 'SHOW', current_user
+    return forbidden unless poll['host_id'] == current_user.id
+
+    render json: poll, status: 200
+  end
+
   private
 
   def handle_validation_errors(err)

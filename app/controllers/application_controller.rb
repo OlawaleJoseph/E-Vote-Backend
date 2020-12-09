@@ -20,4 +20,8 @@ class ApplicationController < ActionController::Base
   def display_error(status, errors)
     render json: { errors: errors }, status: status
   end
+
+  def forbidden
+    render json: { errors: { message: 'You are not allowed to perform this operation' } }, status: 403
+  end
 end
