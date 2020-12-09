@@ -301,7 +301,6 @@ RSpec.describe 'Api::V1::Polls', type: :request do
       expect(response).not_to have_http_status(401)
       expect(res).to be_an_instance_of(Array)
       res.each do |found_poll|
-
         expect(found_poll['host']['id']).to eq(user.id)
         expect(found_poll['host']['id']).not_to eq(1100)
       end
@@ -337,12 +336,27 @@ RSpec.describe 'Api::V1::Polls', type: :request do
       visit_with_another_token
       res = json
 
-      puts user_token
-      puts user2_token
-
       expect(response).to have_http_status(403)
       expect(response).not_to have_http_status(200)
       expect(res['errors']['message']).to eq('You are not allowed to perform this operation')
+    end
+
+    scenario 'returns 422 for invalid poll id' do
+      get '/api/v1/polls/invalid_id', headers: headers(user2_token)
+      res = json
+
+      expect(response).to have_http_status(422)
+      expect(response).not_to have_http_status(200)
+      expect(res['errors']['message']).to eq('Invalid poll id')
+    end
+
+    scenario 'returns 404 if poll is not found' do
+      get '/api/v1/polls/10000', headers: headers(user2_token)
+      res = json
+
+      expect(response).to have_http_status(404)
+      expect(response).not_to have_http_status(200)
+      expect(res['errors']['message']).to eq('Poll not found')
     end
 
     scenario 'successfully returns the poll if accessed by owner' do
