@@ -22,6 +22,8 @@ class Api::V1::PollsController < ApplicationController
     render json: poll, status: 201
   end
 
+  def show; end
+
   private
 
   def handle_validation_errors(err)
