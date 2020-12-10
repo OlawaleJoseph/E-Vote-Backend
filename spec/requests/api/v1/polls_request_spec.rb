@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe 'Api::V1::Polls', type: :request do
-  user = nil
-  poll = nil
-  token = nil
   context 'Polls Creation' do
+    user = nil
+    poll = nil
+    token = nil
     before do
       user = create :user
       token = login_user(user)
@@ -250,8 +250,6 @@ RSpec.describe 'Api::V1::Polls', type: :request do
       scenario 'missing poll answer content field' do
         poll[:poll_questions_attributes][0][:poll_answers_attributes].pop
 
-        p poll
-
         visit_with_headers
 
         res = json
@@ -268,8 +266,111 @@ RSpec.describe 'Api::V1::Polls', type: :request do
       res = json
 
       expect(response).to have_http_status(201)
-      expect(res['host_id']).to eq(user.id)
+      expect(res['host']['id']).to eq(user.id)
       expect(res['id']).to be_truthy
+    end
+  end
+
+  context 'Get All User Polls' do
+    user_token = nil
+    poll = nil
+    user = nil
+    before do
+      user = create :user
+      poll = create :poll, host_id: user.id
+      user_token = login_user(user)
+    end
+
+    let(:visit_with_headers) { get '/api/v1/polls', headers: headers(user_token) }
+    let(:visit_without_headers) { get '/api/v1/polls' }
+
+    scenario 'returns 401 if user is not logged in' do
+      visit_without_headers
+      res = json
+
+      expect(response).to have_http_status(401)
+      expect(response).not_to have_http_status(200)
+      expect(res['errors']['message']).to eq('Kindly login or register')
+    end
+
+    scenario 'successfully returns polls of the logged in user' do
+      visit_with_headers
+      res = json
+
+      expect(response).to have_http_status(200)
+      expect(response).not_to have_http_status(401)
+      expect(res).to be_an_instance_of(Array)
+      res.each do |found_poll|
+        expect(found_poll['host']['id']).to eq(user.id)
+        expect(found_poll['host']['id']).not_to eq(1100)
+      end
+    end
+  end
+
+  context 'Get One User Poll' do
+    user = nil
+    user2 = nil
+    user_token = nil
+    user2_token = nil
+    poll = nil
+    before do
+      user = create :user
+      user2 = create :user, email: 'testmail@gmail.com'
+      poll = create :poll, host_id: user.id
+      user2_token = login_user(user2)
+    end
+
+    let(:visit_with_another_token) { get "/api/v1/polls/#{poll.id}", headers: headers(user2_token) }
+    let(:visit_without_token) { get "/api/v1/polls/#{poll.id}" }
+
+    scenario 'returns 401 if user is not logged in' do
+      visit_without_token
+      res = json
+
+      expect(response).to have_http_status(401)
+      expect(response).not_to have_http_status(200)
+      expect(res['errors']['message']).to eq('Kindly login or register')
+    end
+
+    scenario 'returns 403 if user does not own the post' do
+      visit_with_another_token
+      res = json
+
+      expect(response).to have_http_status(403)
+      expect(response).not_to have_http_status(200)
+      expect(res['errors']['message']).to eq('You are not allowed to perform this operation')
+    end
+
+    scenario 'returns 422 for invalid poll id' do
+      get '/api/v1/polls/invalid_id', headers: headers(user2_token)
+      res = json
+
+      expect(response).to have_http_status(422)
+      expect(response).not_to have_http_status(200)
+      expect(res['errors']['message']).to eq('Invalid poll id')
+    end
+
+    scenario 'returns 404 if poll is not found' do
+      get '/api/v1/polls/10000', headers: headers(user2_token)
+      res = json
+
+      expect(response).to have_http_status(404)
+      expect(response).not_to have_http_status(200)
+      expect(res['errors']['message']).to eq('Poll not found')
+    end
+
+    scenario 'successfully returns the poll if accessed by owner' do
+      delete '/api/v1/logout'
+      user_token = login_user(user)
+      get "/api/v1/polls/#{poll.id}", headers: headers(user_token)
+
+      res = json
+
+      expect(response).to have_http_status(200)
+      expect(response).not_to have_http_status(401)
+      expect(res).to be_an_instance_of(Hash)
+      expect(res.keys).to include('id', 'title', 'info', 'start_date', 'end_date')
+      expect(res['host']['id']).to eq(user.id)
     end
   end
 end

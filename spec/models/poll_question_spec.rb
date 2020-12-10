@@ -11,6 +11,5 @@ RSpec.describe PollQuestion, type: :model do
   context 'Associations' do
     scenario { should belong_to(:poll) }
     scenario { should have_many(:poll_answers) }
-    scenario { should have_one(:answer) }
   end
 end

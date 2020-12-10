@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::Base
+  rescue_from ArgumentError, with: :handle_argument_error
   skip_before_action :verify_authenticity_token
   respond_to :json
 
@@ -19,5 +20,13 @@ class ApplicationController < ActionController::Base
 
   def display_error(status, errors)
     render json: { errors: errors }, status: status
+  end
+
+  def forbidden
+    render json: { errors: { message: 'You are not allowed to perform this operation' } }, status: 403
+  end
+
+  def handle_argument_error
+    render json: { errors: { message: 'Invalid poll id' } }, status: 422
   end
 end

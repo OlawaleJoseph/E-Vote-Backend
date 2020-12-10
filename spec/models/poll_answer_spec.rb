@@ -9,6 +9,5 @@ RSpec.describe PollAnswer, type: :model do
 
   context 'Associations' do
     scenario { should belong_to(:poll_question) }
-    scenario { should belong_to(:question).optional }
   end
 end
